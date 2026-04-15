@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: transpobot-backend
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: DB_HOST
+        fromDatabase:
+          name: transpobot-db
+          property: host
+      - key: DB_USER
+        fromDatabase:
+          name: transpobot-db
+          property: username
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: transpobot-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: transpobot-db
+          property: database
+      - key: DB_PORT
+        fromDatabase:
+          name: transpobot-db
+          property: port
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: PORT
+        value: 3000
+      - key: NODE_ENV
+        value: production
+
+databases:
+  - name: transpobot-db
+    databaseName: transpobot
+    user: transpobot_user
