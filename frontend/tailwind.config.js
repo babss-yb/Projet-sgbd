@@ -3,22 +3,26 @@ module.exports = {
   content: [
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        bgPrimary: '#06080f',
-        bgSecondary: '#0d1117',
-        bgTertiary: '#161b22',
-        bgElevated: '#1c2333',
-        bgSurface: 'rgba(22, 27, 34, 0.7)',
+        bgPrimary: 'var(--bg-primary)',
+        bgSecondary: 'var(--bg-secondary)',
+        bgTertiary: 'var(--bg-tertiary)',
+        bgElevated: 'var(--bg-elevated)',
+        bgSurface: 'var(--bg-surface)',
+        borderColor: 'var(--border-color)',
+        
         accentPrimary: '#7c5bff',
         accentSecondary: '#00d4aa',
         accentTertiary: '#ff6b9d',
         accentWarning: '#ffb347',
         accentInfo: '#4dabf7',
-        textPrimary: '#e6edf3',
-        textSecondary: '#8b949e',
-        textMuted: '#484f58',
+        
+        textPrimary: 'var(--text-primary)',
+        textSecondary: 'var(--text-secondary)',
+        textMuted: 'var(--text-muted)',
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(135deg, #7c5bff 0%, #00d4aa 100%)',
