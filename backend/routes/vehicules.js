@@ -13,7 +13,18 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET un véhicule par ID
+// GET véhicules par statut (doit être avant /:id)
+router.get('/statut/:statut', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM vehicules WHERE statut = ?', [req.params.statut]);
+    res.json(rows);
+  } catch (error) {
+    console.error('Erreur:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des véhicules' });
+  }
+});
+
+// GET un véhicule par ID (doit être après les routes spécifiques)
 router.get('/:id', async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM vehicules WHERE id = ?', [req.params.id]);
@@ -24,17 +35,6 @@ router.get('/:id', async (req, res) => {
   } catch (error) {
     console.error('Erreur:', error);
     res.status(500).json({ error: 'Erreur lors de la récupération du véhicule' });
-  }
-});
-
-// GET véhicules par statut
-router.get('/statut/:statut', async (req, res) => {
-  try {
-    const [rows] = await db.query('SELECT * FROM vehicules WHERE statut = ?', [req.params.statut]);
-    res.json(rows);
-  } catch (error) {
-    console.error('Erreur:', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des véhicules' });
   }
 });
 

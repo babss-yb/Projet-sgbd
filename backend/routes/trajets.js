@@ -13,21 +13,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET un trajet par ID
-router.get('/:id', async (req, res) => {
-  try {
-    const [rows] = await db.query('SELECT * FROM v_trajets_recents WHERE id = ?', [req.params.id]);
-    if (rows.length === 0) {
-      return res.status(404).json({ error: 'Trajet non trouvé' });
-    }
-    res.json(rows[0]);
-  } catch (error) {
-    console.error('Erreur:', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération du trajet' });
-  }
-});
-
-// GET trajets par statut
+// GET trajets par statut (doit être avant /:id)
 router.get('/statut/:statut', async (req, res) => {
   try {
     const [rows] = await db.query('SELECT * FROM v_trajets_recents WHERE statut = ? ORDER BY date_heure_depart DESC', [req.params.statut]);
@@ -38,7 +24,7 @@ router.get('/statut/:statut', async (req, res) => {
   }
 });
 
-// GET trajets récents (7 derniers jours)
+// GET trajets récents (7 derniers jours) (doit être avant /:id)
 router.get('/recents/jours/:jours', async (req, res) => {
   try {
     const jours = req.params.jours || 7;
@@ -50,6 +36,20 @@ router.get('/recents/jours/:jours', async (req, res) => {
   } catch (error) {
     console.error('Erreur:', error);
     res.status(500).json({ error: 'Erreur lors de la récupération des trajets' });
+  }
+});
+
+// GET un trajet par ID (doit être après les routes spécifiques)
+router.get('/:id', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM v_trajets_recents WHERE id = ?', [req.params.id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Trajet non trouvé' });
+    }
+    res.json(rows[0]);
+  } catch (error) {
+    console.error('Erreur:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération du trajet' });
   }
 });
 

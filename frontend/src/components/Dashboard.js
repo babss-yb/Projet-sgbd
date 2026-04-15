@@ -237,7 +237,7 @@ function Dashboard({ apiUrl }) {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 mb-8">
         <StatCard
           icon={<Activity size={26} />}
           title="Volume Hebdomadaire"
@@ -252,6 +252,112 @@ function Dashboard({ apiUrl }) {
           description="Anomalies recensées sur le réseau ce mois-ci"
           accent="bg-[#ff6b9d]/10 border-[#ff6b9d]/20 text-[#ff6b9d]"
         />
+      </div>
+
+      {/* Detailed Breakdown Section */}
+      <div className="bg-bgSurface/50 backdrop-blur-xl border border-white/5 rounded-2xl p-6">
+        <h3 className="text-lg font-bold text-textPrimary mb-6">Détail par catégorie</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Véhicules breakdown */}
+          <div className="bg-bgTertiary/50 rounded-xl p-4 border border-white/5">
+            <h4 className="text-sm font-semibold text-textSecondary mb-3 flex items-center gap-2">
+              <Activity size={16} className="text-[#4dabf7]" />
+              Véhicules
+            </h4>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Total</span>
+                <span className="font-semibold text-textPrimary">{kpi.vehicules.total}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Actifs</span>
+                <span className="font-semibold text-[#4dabf7]">{kpi.vehicules.actifs}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Maintenance</span>
+                <span className="font-semibold text-[#ffb347]">{kpi.vehicules.maintenance}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Autres</span>
+                <span className="font-semibold text-textSecondary">{kpi.vehicules.total - kpi.vehicules.actifs - kpi.vehicules.maintenance}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Chauffeurs breakdown */}
+          <div className="bg-bgTertiary/50 rounded-xl p-4 border border-white/5">
+            <h4 className="text-sm font-semibold text-textSecondary mb-3 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#00d4aa]"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Chauffeurs
+            </h4>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Total</span>
+                <span className="font-semibold text-textPrimary">{kpi.chauffeurs.total}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Actifs</span>
+                <span className="font-semibold text-[#00d4aa]">{kpi.chauffeurs.actifs}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Congé/Suspendu</span>
+                <span className="font-semibold text-textSecondary">{kpi.chauffeurs.total - kpi.chauffeurs.actifs}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Trajets breakdown */}
+          <div className="bg-bgTertiary/50 rounded-xl p-4 border border-white/5">
+            <h4 className="text-sm font-semibold text-textSecondary mb-3 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#7c5bff]"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+              Trajets
+            </h4>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Total</span>
+                <span className="font-semibold text-textPrimary">{kpi.trajets.total}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Terminés</span>
+                <span className="font-semibold text-[#7c5bff]">{kpi.trajets.termines}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">En cours</span>
+                <span className="font-semibold text-[#00d4aa]">{kpi.trajets.en_cours}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Planifiés/Annulés</span>
+                <span className="font-semibold text-textSecondary">{kpi.trajets.total - kpi.trajets.termines - kpi.trajets.en_cours}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Incidents breakdown */}
+          <div className="bg-bgTertiary/50 rounded-xl p-4 border border-white/5">
+            <h4 className="text-sm font-semibold text-textSecondary mb-3 flex items-center gap-2">
+              <ShieldAlert size={16} className="text-[#ff6b9d]" />
+              Incidents
+            </h4>
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Total</span>
+                <span className="font-semibold text-textPrimary">{kpi.incidents.total}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Non résolus</span>
+                <span className="font-semibold text-[#ff6b9d]">{kpi.incidents.non_resolus}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Résolus</span>
+                <span className="font-semibold text-[#00d4aa]">{kpi.incidents.total - kpi.incidents.non_resolus}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-textMuted">Ce mois</span>
+                <span className="font-semibold text-[#ffb347]">{kpi.incidents.ce_mois}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

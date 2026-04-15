@@ -44,11 +44,34 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Erreur serveur interne' });
 });
 
-// Démarrage du serveur
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Serveur TranspoBot démarré sur le port ${PORT}`);
-  console.log(`📊 API disponible sur http://localhost:${PORT}/api`);
-});
+// Démarrage du serveur avec recherche automatique de port libre
+const PORT = parseInt(process.env.PORT) || 3000;
+const MAX_PORT_ATTEMPTS = 10;
+
+function startServer(port) {
+  const server = app.listen(port, () => {
+    console.log(`🚀 Serveur TranspoBot démarré sur le port ${port}`);
+    console.log(`📊 API disponible sur http://localhost:${port}/api`);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      const nextPort = port + 1;
+      if (nextPort < PORT + MAX_PORT_ATTEMPTS) {
+        console.log(`⚠️  Port ${port} occupé, essai sur le port ${nextPort}...`);
+        startServer(nextPort);
+      } else {
+        console.error(`❌ Impossible de trouver un port libre entre ${PORT} et ${PORT + MAX_PORT_ATTEMPTS - 1}`);
+        console.error(`💡 Essayez de changer le port dans .env ou de tuer les processus sur ces ports`);
+        process.exit(1);
+      }
+    } else {
+      console.error('Erreur serveur:', err);
+      process.exit(1);
+    }
+  });
+}
+
+startServer(PORT);
 
 module.exports = app;

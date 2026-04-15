@@ -4,8 +4,8 @@
   "description": "TranspoBot - Backend API pour la gestion de transport urbain avec IA",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node --max-http-header-size=65536 server.js",
+    "dev": "nodemon --exec \"node --max-http-header-size=65536\" server.js"
   },
   "keywords": ["transport", "api", "mysql", "openai", "chatbot"],
   "author": "GLSi - ESP/UCAD",

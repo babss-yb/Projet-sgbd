@@ -3,10 +3,28 @@ const router = express.Router();
 const db = require('../config/database');
 const OpenAI = require('openai');
 
-// Initialisation du client LLM (Ollama local via API OpenAI-compatible par défaut)
+const llmProvider = (process.env.LLM_PROVIDER || '').toLowerCase();
+
+const defaultBaseUrl = llmProvider === 'xai'
+  ? 'https://api.x.ai/v1'
+  : llmProvider === 'groq'
+    ? 'https://api.groq.com/openai/v1'
+    : 'http://localhost:11434/v1';
+
+const defaultModel = llmProvider === 'xai'
+  ? 'grok-2-latest'
+  : llmProvider === 'groq'
+    ? 'llama-3.3-70b-versatile'
+    : 'llama3.1';
+
 const openai = new OpenAI({
-  apiKey: process.env.LLM_API_KEY || process.env.OPENAI_API_KEY || 'ollama',
-  baseURL: process.env.LLM_BASE_URL || 'http://localhost:11434/v1'
+  apiKey:
+    process.env.LLM_API_KEY ||
+    process.env.GROQ_API_KEY ||
+    process.env.XAI_API_KEY ||
+    process.env.OPENAI_API_KEY ||
+    'ollama',
+  baseURL: process.env.LLM_BASE_URL || defaultBaseUrl
 });
 
 // Schéma de la base de données pour le contexte du LLM
@@ -43,8 +61,8 @@ Vues disponibles:
 Fonctions MySQL utiles:
 - NOW(): date et heure actuelle
 - DATE_SUB(NOW(), INTERVAL 7 DAY): il y a 7 jours
-- MONTH(NOW(): mois actuel
-- YEAR(NOW(): année actuelle
+- MONTH(NOW()): mois actuel
+- YEAR(NOW()): année actuelle
 - COUNT(*): compte le nombre de lignes
 - SUM(): somme des valeurs
 - AVG(): moyenne
@@ -84,9 +102,9 @@ Format de réponse attendu (JSON):
 
 Ne génère que du JSON valide, pas de texte avant ou après.`;
 
-    // Appel au LLM (Ollama)
+    // Appel au LLM
     const completion = await openai.chat.completions.create({
-      model: process.env.LLM_MODEL || process.env.OPENAI_MODEL || 'llama3.1',
+      model: process.env.LLM_MODEL || process.env.OPENAI_MODEL || defaultModel,
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: message }
