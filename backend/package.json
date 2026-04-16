@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start": "node --max-http-header-size=65536 server.js",
-    "dev": "nodemon --exec \"node --max-http-header-size=65536\" server.js"
+    "dev": "nodemon --exec \"node --max-http-header-size=65536\" server.js",
+    "build": "echo 'No build step required for backend'"
   },
   "keywords": ["transport", "api", "mysql", "openai", "chatbot"],
   "author": "GLSi - ESP/UCAD",
