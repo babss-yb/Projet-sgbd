@@ -18,7 +18,7 @@ services:
       - key: DB_USER
         fromDatabase:
           name: transpobot-db
-          property: username
+          property: user # Changé de username à user
       - key: DB_PASSWORD
         fromDatabase:
           name: transpobot-db
@@ -40,7 +40,7 @@ services:
     runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
-    staticPublishPath: build # Changé de publishDir à staticPublishPath
+    staticPublishPath: build
     envVars:
       - key: REACT_APP_API_URL
         value: https://transpobot-backend.onrender.com
