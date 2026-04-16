@@ -32,15 +32,15 @@ services:
           name: transpobot-db
           property: port
       - key: OPENAI_API_KEY
-        sync: false
+        generateValue: true
 
-  # Frontend static
+  # Frontend React
   - type: web
     name: transpobot-frontend
-    runtime: static # C'est ici qu'on définit que c'est un site statique
+    runtime: static
     rootDir: frontend
     buildCommand: npm install && npm run build
-    publishDir: build
+    staticPublishPath: build # Changé de publishDir à staticPublishPath
     envVars:
       - key: REACT_APP_API_URL
         value: https://transpobot-backend.onrender.com
