@@ -1,5 +1,5 @@
 services:
-  # Backend API
+  # Le Backend
   - type: web
     name: transpobot-backend
     runtime: node
@@ -9,44 +9,16 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: PORT
-        value: 3000
-      # Si tu utilises une DB Render, elles seront liées ici
-      - key: DB_HOST
-        fromDatabase:
-          name: transpobot-db
-          property: host
-      - key: DB_USER
-        fromDatabase:
-          name: transpobot-db
-          property: username
-      - key: DB_PASSWORD
-        fromDatabase:
-          name: transpobot-db
-          property: password
-      - key: DB_NAME
-        fromDatabase:
-          name: transpobot-db
-          property: database
-      - key: DB_PORT
-        fromDatabase:
-          name: transpobot-db
-          property: port
-      - key: OPENAI_API_KEY
-        sync: false
 
-  # Frontend React
+  # Le Frontend
   - type: static
     name: transpobot-frontend
     rootDir: frontend
     buildCommand: npm install && npm run build
     publishDir: build
-    envVars:
-      - key: REACT_APP_API_URL
-        value: https://transpobot-backend.onrender.com
 
+# La Base de données
 databases:
   - name: transpobot-db
     databaseName: transpobot
-    user: transpobot_user
-    plan: free # Très important pour éviter les frais par défaut
+    plan: free
