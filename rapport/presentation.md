@@ -119,6 +119,8 @@ Une société de transport gère sa flotte, ses chauffeurs, ses trajets et ses i
 - React 18.2.0
 - Axios
 - Lucide React
+- Tailwind CSS v3 (Thème Sombre / Glassmorphism)
+- Leaflet (Cartographie)
 
 **Backend**
 - Node.js + Express 4.18.2
@@ -162,7 +164,8 @@ transpobot/
 │   ├── src/components/
 │   │   ├── Dashboard.js
 │   │   ├── DataViews.js
-│   │   └── Chat.js
+│   │   ├── FloatingChat.js
+│   │   └── RouteMap.js
 │   └── App.js
 ├── schema.sql
 └── rapport/
@@ -193,9 +196,10 @@ transpobot/
 ## Slide 10: Fonctionnalités développées - Frontend
 
 ### Tableau de bord
+- Design Premium Glassmorphism (Thème sombre)
+- Cartographie interactive avec Leaflet
+- Statistiques en temps réel depuis l'API
 - 4 cartes KPI : Véhicules, Chauffeurs, Trajets, Incidents
-- Statistiques en temps réel
-- Données depuis l'API
 
 ### Vues de données
 - 6 onglets : Véhicules, Chauffeurs, Trajets, Incidents, Lignes, Tarifs
@@ -203,7 +207,7 @@ transpobot/
 - Chargement dynamique
 
 ### Assistant IA
-- Interface de conversation moderne
+- Bouton flottant et interface persistante
 - Affichage SQL généré
 - Résultats en tableau
 - Explications naturelles
@@ -381,30 +385,4 @@ ORDER BY nb DESC LIMIT 1
 
 ---
 
-## Slide 18: Remerciements
-
-### Remerciements
-- **Pr. Ahmath Bamba MBACKE** pour son encadrement
-- **ESP/UCAD** pour les ressources mises à disposition
-- **Département GLSi** pour le support pédagogique
-
-### Questions ?
-
-**Merci de votre attention**
-
----
-
-## Notes pour la présentation
-
-### Conseils
-- Préparer une démo en direct de l'application
-- Avoir des captures d'écran de secours
-- Pratiquer les questions/réponses possibles
-- Vérifier que le déploiement est fonctionnel avant la présentation
-- Avoir le code source accessible sur GitHub
-
-### Durée estimée
-- Présentation : 10-12 minutes
-- Démo : 3-5 minutes
-- Questions : 5 minutes
-- Total : 18-22 minutes
+ 

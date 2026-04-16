@@ -172,6 +172,8 @@ L'architecture adoptée est une architecture web classique en trois tiers :
 - React 18.2.0 : Framework JavaScript moderne
 - Axios : Client HTTP pour les appels API
 - Lucide React : Bibliothèque d'icônes
+- Tailwind CSS v3 : Framework CSS utilitaire (Interface Glassmorphism)
+- Leaflet : Bibliothèque de cartographie interactive
 - Create React App : Outil de build
 
 **Backend**
@@ -218,7 +220,8 @@ transpobot/
 │   │   ├── components/
 │   │   │   ├── Dashboard.js
 │   │   │   ├── DataViews.js
-│   │   │   └── Chat.js
+│   │   │   ├── FloatingChat.js
+│   │   │   └── RouteMap.js
 │   │   ├── App.js
 │   │   ├── App.css
 │   │   ├── index.js
@@ -293,8 +296,10 @@ Le backend expose 9 endpoints REST :
 L'interface utilisateur est organisée en trois onglets principaux :
 
 **Tableau de bord (Dashboard)**
+- Design premium exclusif avec effet Glassmorphism (Thème sombre)
+- Cartographie interactive des lignes de transport (Leaflet)
 - 4 cartes KPI : Véhicules, Chauffeurs, Trajets, Incidents
-- Affichage des statistiques clés
+- Affichage des statistiques clés avec animations dynamiques
 - Données en temps réel depuis l'API
 
 **Vues de données (DataViews)**
@@ -302,8 +307,8 @@ L'interface utilisateur est organisée en trois onglets principaux :
 - Tableaux triables avec formatage des données
 - Chargement dynamique depuis l'API
 
-**Assistant IA (Chat)**
-- Interface de conversation moderne
+**Assistant IA (Floating Chat)**
+- Interface de conversation moderne et persistante (bouton flottant)
 - Affichage des requêtes SQL générées
 - Présentation des résultats sous forme de tableau
 - Explications naturelles des réponses

@@ -17,7 +17,8 @@ TranspoBot est une application web fullstack composée de :
 ┌─────────────────────────────────────────────────────────────┐
 │                    Frontend React                            │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
-│  │  Dashboard   │  │  Data Views  │  │  Chat IA     │      │
+│  │ Dashboard /  │  │  Data Views  │  │ Floating     │      │
+│  │ RouteMap     │  │              │  │ Chat IA      │      │
 │  └──────────────┘  └──────────────┘  └──────────────┘      │
 └────────────────────┬────────────────────────────────────────┘
                      │ HTTP/REST
@@ -61,6 +62,8 @@ TranspoBot est une application web fullstack composée de :
 - **Framework** : React 18.2.0
 - **HTTP Client** : Axios
 - **Icônes** : Lucide React
+- **Styles & UI** : Tailwind CSS v3 (Glassmorphism Dark Theme)
+- **Cartographie** : Leaflet & React-Leaflet
 - **Build Tool** : Create React App
 
 ### Backend
@@ -108,7 +111,8 @@ transpobot/
 │   │   ├── components/
 │   │   │   ├── Dashboard.js     # Composant tableau de bord
 │   │   │   ├── DataViews.js     # Composant vues de données
-│   │   │   └── Chat.js          # Composant chat IA
+│   │   │   ├── FloatingChat.js  # Assistant IA persistant
+│   │   │   └── RouteMap.js      # Cartographie Leaflet
 │   │   ├── App.js               # Composant principal
 │   │   ├── App.css
 │   │   ├── index.js             # Point d'entrée React
