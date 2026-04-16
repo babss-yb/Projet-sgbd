@@ -4,18 +4,18 @@
 
 @layer base {
   :root {
-    /* Light Mode Variables */
-    --bg-primary: #f8fafc;
+    /* Light Mode Variables - Refined for premium look */
+    --bg-primary: #fcfcfd;
     --bg-secondary: #ffffff;
-    --bg-tertiary: #f1f5f9;
+    --bg-tertiary: #f8fafc;
     --bg-elevated: #ffffff;
-    --bg-surface: rgba(255, 255, 255, 0.85);
+    --bg-surface: rgba(255, 255, 255, 0.7);
     
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --text-muted: #94a3b8;
+    --text-primary: #000000;
+    --text-secondary: #1f2937;
+    --text-muted: #4b5563;
     
-    --border-color: rgba(0, 0, 0, 0.08);
+    --border-color: rgba(0, 0, 0, 0.05);
   }
 
   .dark {

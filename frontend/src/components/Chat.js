@@ -5,9 +5,14 @@ import { Send, Bot, User, Sparkles, Trash2, Copy, Check } from 'lucide-react';
 const MAX_CHARS = 500;
 
 function MessageTime({ ts }) {
+  if (!ts) return null;
+  const isToday = new Date().toDateString() === ts.toDateString();
+  const dateStr = ts.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+  const timeStr = ts.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  
   return (
-    <span className="text-[10px] text-textMuted mt-1 block">
-      {ts.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+    <span className="text-[9px] text-textMuted font-medium opacity-50 whitespace-nowrap">
+      {isToday ? timeStr : `${dateStr}. ${timeStr}`}
     </span>
   );
 }
@@ -35,7 +40,7 @@ function CopyButton({ text }) {
 function Chat({ apiUrl }) {
   const WELCOME = {
     role: 'assistant',
-    content: 'Bonjour ! Je suis TranspoBot. Demandez-moi de formuler des requêtes sur vos flottes, chauffeurs ou opérations. Je traduis tout en SQL pour vous.',
+    content: 'Bonjour, je suis TranspoBot à votre service !',
     ts: new Date()
   };
 
@@ -80,10 +85,10 @@ function Chat({ apiUrl }) {
   };
 
   const exampleQuestions = [
-    "Nombre de trajets terminés cette semaine ?",
-    "Quels chauffeurs ont eu un incident ce mois ?",
-    "Véhicules nécessitant une maintenance ?",
-    "Recette totale des trajets terminés ?"
+    "Trajets de cette semaine ?",
+    "Véhicules en maintenance ?",
+    "Chauffeurs actifs ?",
+    "Recette totale ?"
   ];
 
   const clearChat = () => setMessages([{ ...WELCOME, ts: new Date() }]);
@@ -92,104 +97,174 @@ function Chat({ apiUrl }) {
   const overLimit = charCount > MAX_CHARS;
 
   return (
-    <div className="animate-fade-slide-up opacity-0 flex flex-col h-full">
-      <div className="flex flex-col flex-1 bg-bgSurface backdrop-blur-xl border border-white/5 rounded-2xl shadow-[0_4px_24px_rgba(0,0,0,0.2)] overflow-hidden max-h-[calc(100vh-80px)]">
-
-        {/* Header */}
-        <div className="bg-[#161b22]/80 border-b border-white/5 px-6 py-4 shrink-0 flex items-center justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-0.5">
-              <Sparkles size={18} className="text-accentPrimary animate-pulse" />
-              <h2 className="text-lg font-bold bg-gradient-primary bg-clip-text text-transparent">TranspoBot IA</h2>
-              <span className="text-[10px] px-2 py-0.5 bg-[#7c5bff]/20 border border-[#7c5bff]/30 rounded-full text-[#7c5bff] font-semibold uppercase tracking-wider">Beta</span>
-            </div>
-            <p className="text-xs text-textSecondary">Propulsé par NLP · {messages.length - 1} message{messages.length > 2 ? 's' : ''}</p>
+    <div className="animate-fade-slide-up opacity-0 flex flex-col lg:flex-row gap-6 h-full max-h-[calc(100vh-80px)]">
+      
+      {/* Sidebar - Context & Info */}
+      <div className="hidden lg:flex flex-col w-80 shrink-0 gap-6">
+        <div className="bg-bgSecondary/60 backdrop-blur-xl border border-white/5 rounded-3xl p-6 shadow-xl">
+          <div className="w-12 h-12 bg-gradient-primary rounded-2xl flex items-center justify-center text-white mb-6 shadow-glow">
+            <Bot size={24} />
           </div>
-          <button
-            onClick={clearChat}
-            title="Effacer la conversation"
-            className="flex items-center gap-2 px-3 py-2 bg-white/5 hover:bg-[#ff6b9d]/10 border border-white/5 hover:border-[#ff6b9d]/30 rounded-xl text-xs text-textSecondary hover:text-[#ff6b9d] transition-all duration-200"
-          >
-            <Trash2 size={13} />
-            Effacer
-          </button>
+          <h3 className="text-xl font-bold text-textPrimary mb-2">Centre IA</h3>
+          <p className="text-sm text-textSecondary leading-relaxed mb-6">
+            Je suis connecté à votre base de données de transport urbain. Je peux analyser les flottes, les trajets, le personnel et les incidents en temps réel.
+          </p>
+          
+          <div className="space-y-4">
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full bg-accentPrimary/10 flex items-center justify-center shrink-0 mt-0.5">
+                <Check size={12} className="text-accentPrimary" />
+              </div>
+              <p className="text-xs text-textSecondary"><strong className="text-textPrimary block mb-0.5">Analyse SQL</strong> Conversion de requêtes naturelles en requêtes SQL optimisées.</p>
+            </div>
+            <div className="flex items-start gap-3">
+              <div className="w-6 h-6 rounded-full bg-accentSecondary/10 flex items-center justify-center shrink-0 mt-0.5">
+                <Check size={12} className="text-accentSecondary" />
+              </div>
+              <p className="text-xs text-textSecondary"><strong className="text-textPrimary block mb-0.5">Export & Copie</strong> Exportez vos résultats ou copiez le SQL d'un clic.</p>
+            </div>
+          </div>
         </div>
 
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-5 flex flex-col gap-5">
+        <div className="bg-bgSecondary/40 backdrop-blur-xl border border-white/5 rounded-3xl p-5 shadow-lg flex-1">
+          <h4 className="text-[10px] uppercase tracking-widest text-textMuted font-bold mb-4 flex items-center gap-2">
+            <Sparkles size={12} className="text-accentPrimary" />
+            Conseils d'utilisation
+          </h4>
+          <ul className="space-y-3">
+            {[
+              "Soyez précis sur les périodes (ex: 'cette semaine').",
+              "Mentionnez les statuts (ex: 'en maintenance').",
+              "Utilisez des noms de colonnes explicites.",
+              "Vérifiez toujours le SQL généré pour plus de précision."
+            ].map((tip, i) => (
+              <li key={i} className="text-[11px] text-textSecondary leading-relaxed flex gap-2">
+                <span className="text-accentPrimary font-bold">•</span> {tip}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      {/* Main Chat Area */}
+      <div className="flex flex-col flex-1 bg-bgSurface backdrop-blur-2xl border border-white/10 dark:border-white/5 rounded-3xl shadow-[0_32px_80px_rgba(0,0,0,0.4)] overflow-hidden relative">
+        {/* Header */}
+        <div className="bg-bgSecondary/80 backdrop-blur-xl border-b border-borderColor/50 dark:border-white/5 px-6 py-5 shrink-0 flex items-center justify-between relative z-10 transition-colors">
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center text-white shadow-glow relative">
+              <Sparkles size={18} className="animate-pulse" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-[#00d4aa] rounded-full border-2 border-bgSecondary"></div>
+            </div>
+            <div>
+              <div className="flex items-center gap-3">
+                <h2 className="text-lg font-bold text-textPrimary">TranspoBot IA</h2>
+                <span className="text-[9px] px-2 py-0.5 bg-accentPrimary/20 border border-accentPrimary/30 rounded-full text-accentPrimary font-bold uppercase tracking-wider">Operational</span>
+              </div>
+              <p className="text-[10px] text-textSecondary font-medium">NLP Core v2.4 · {messages.length - 1} interactions · Latence &lt; 120ms</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={clearChat}
+              className="flex items-center gap-2 px-3 py-2 bg-bgTertiary hover:bg-accentTertiary/10 border border-borderColor/50 dark:border-white/5 rounded-xl text-[11px] font-bold text-textSecondary hover:text-accentTertiary transition-all duration-300"
+            >
+              <Trash2 size={13} />
+              Réinitialiser
+            </button>
+          </div>
+        </div>
+
+        {/* Messages space */}
+        <div className="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6 scroll-smooth">
           {messages.map((msg, index) => (
-            <div key={index} className={`flex gap-3 max-w-[87%] ${msg.role === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}
-              style={{ animation: `messageSlideIn 0.3s ease-out ${index === messages.length - 1 ? '0s' : '0s'} forwards` }}>
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${msg.role === 'user' ? 'bg-bgTertiary text-textSecondary border border-white/5' : 'bg-gradient-primary text-white'}`}>
-                {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
+            <div key={index} 
+                 className={`flex gap-4 max-w-[90%] ${msg.role === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}
+                 style={{ animation: `fadeSlideUp 0.4s ease-out forwards` }}>
+              
+              <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-lg border border-white/10 transition-all duration-300 ${msg.role === 'user' ? 'bg-bgTertiary text-textSecondary translate-y-2' : 'bg-gradient-primary text-white scale-110 shadow-glow'}`}>
+                {msg.role === 'user' ? <User size={18} /> : <Bot size={18} />}
               </div>
 
-              <div className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                <div className={`px-5 py-4 text-textPrimary shadow-sm ${msg.role === 'user' ? 'bg-[#7c5bff]/10 border border-[#7c5bff]/20 rounded-tl-2xl rounded-tr-sm rounded-b-2xl' : 'bg-bgElevated border border-white/5 rounded-tl-sm rounded-tr-2xl rounded-b-2xl'}`}>
-                  <div className="text-[0.9rem] leading-relaxed">{msg.content}</div>
+              <div className={`flex flex-col flex-1 min-w-0 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                <div className={`px-5 py-4 shadow-xl border overflow-hidden max-w-full relative transition-all duration-500
+                    ${msg.role === 'user' 
+                      ? 'bg-accentPrimary/10 border-accentPrimary/20 rounded-tl-2xl rounded-tr-sm rounded-b-2xl dark:bg-accentPrimary/5' 
+                      : 'bg-bgElevated border-borderColor/50 dark:border-white/5 rounded-tl-sm rounded-tr-2xl rounded-b-2xl'}`}>
+                  
+                  <div className="flex justify-between items-start gap-4 mb-2">
+                    <div className="text-[0.92rem] leading-relaxed text-textPrimary font-medium">{msg.content}</div>
+                    <div className="shrink-0 mt-0.5"><MessageTime ts={msg.ts} /></div>
+                  </div>
 
                   {msg.sql && (
-                    <div className="mt-4 pt-4 border-t border-white/5">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="text-[10px] uppercase tracking-widest text-accentPrimary font-semibold">SQL Exécuté</h4>
+                    <div className="mt-4 pt-4 border-t border-borderColor/30 dark:border-white/5">
+                      <div className="flex items-center justify-between mb-2.5">
+                        <span className="text-[9px] uppercase tracking-[0.2em] text-accentPrimary font-black">Structure SQL</span>
                         <CopyButton text={msg.sql} />
                       </div>
-                      <pre className="bg-[#0d1117] text-[#c9d1d9] px-4 py-3 rounded-lg border border-[#30363d] text-xs font-mono overflow-x-auto m-0 leading-relaxed">
+                      <pre className="bg-[#0d1117] text-[#c9d1d9] px-4 py-3.5 rounded-xl border border-[#30363d] text-[11px] font-mono overflow-x-auto m-0 leading-relaxed shadow-inner">
                         {msg.sql}
                       </pre>
                     </div>
                   )}
 
-                  {msg.explanation && (
-                    <div className="mt-3 px-3 py-2.5 bg-[#00d4aa]/5 border-l-4 border-accentSecondary rounded-r-lg text-xs text-textSecondary leading-relaxed">
-                      <strong className="text-accentSecondary">Analyse :</strong> {msg.explanation}
-                    </div>
-                  )}
-
                   {msg.results && msg.results.length > 0 && (
-                    <div className="mt-3 bg-[#0d1117] border border-white/5 rounded-xl overflow-hidden">
-                      <div className="flex items-center justify-between bg-white/[0.03] px-4 py-2.5 border-b border-white/5">
-                        <span className="text-[10px] text-textSecondary uppercase tracking-wider font-semibold">Résultats · {msg.results.length} ligne{msg.results.length > 1 ? 's' : ''}</span>
+                    <div className="mt-4 bg-[#0d1117] border border-white/5 rounded-2xl overflow-hidden max-w-full shadow-2xl">
+                      <div className="flex items-center justify-between bg-white/[0.04] px-4 py-3 border-b border-white/5">
+                        <span className="text-[10px] text-textSecondary uppercase tracking-widest font-black">Données Récupérées · {msg.results.length} lignes</span>
                       </div>
-                      <div className="overflow-x-auto">
-                        <table className="w-full border-collapse text-xs">
+                      <div className="overflow-x-auto w-full max-w-full block scrollbar-thin">
+                        <table className="w-full border-collapse text-[11px] min-w-max">
                           <thead>
-                            <tr>{Object.keys(msg.results[0]).map(k => <th key={k} className="px-4 py-2.5 text-left border-b border-white/5 text-textSecondary font-semibold whitespace-nowrap">{k}</th>)}</tr>
+                            <tr className="bg-white/[0.02]">
+                              {Object.keys(msg.results[0]).map(k => (
+                                <th key={k} className="px-5 py-3 text-left border-b border-white/5 text-textSecondary font-bold uppercase tracking-wider">{k}</th>
+                              ))}
+                            </tr>
                           </thead>
                           <tbody>
-                            {msg.results.slice(0, 5).map((row, i) => (
-                              <tr key={i} className="hover:bg-white/5">
-                                {Object.values(row).map((val, j) => <td key={j} className="px-4 py-2.5 border-b border-white/[0.03] text-textSecondary whitespace-nowrap">{val === null ? <span className="opacity-30">null</span> : String(val)}</td>)}
+                            {msg.results.slice(0, 10).map((row, i) => (
+                              <tr key={i} className="hover:bg-white/[0.03] transition-colors border-b border-white/[0.02] last:border-0 text-textSecondary/80">
+                                {Object.values(row).map((val, j) => (
+                                  <td key={j} className="px-5 py-2.5 whitespace-nowrap">
+                                    {val === null ? <span className="opacity-20 italic">null</span> : String(val)}
+                                  </td>
+                                ))}
                               </tr>
                             ))}
                           </tbody>
                         </table>
                       </div>
-                      {msg.results.length > 5 && <p className="px-4 py-2 text-[10px] text-textMuted text-center bg-white/[0.02]">+{msg.results.length - 5} autres lignes</p>}
+                      {msg.results.length > 10 && (
+                        <div className="px-4 py-2 text-[10px] text-accentPrimary text-center bg-white/[0.02] font-bold border-t border-white/5">
+                          + {msg.results.length - 10} lignes supplémentaires masquées
+                        </div>
+                      )}
                     </div>
                   )}
 
                   {msg.sqlError && (
-                    <div className="mt-3 px-4 py-3 bg-[#ff6b9d]/10 text-[#ff6b9d] border border-[#ff6b9d]/20 rounded-xl text-xs">
-                      <strong>Erreur :</strong> {msg.sqlError}
+                    <div className="mt-4 px-4 py-3 bg-accentTertiary/10 text-accentTertiary border border-accentTertiary/20 rounded-xl text-xs flex gap-3 items-center">
+                      <div className="w-2 h-2 rounded-full bg-accentTertiary animate-pulse"></div>
+                      <span className="flex-1"><strong>Système :</strong> {msg.sqlError}</span>
                     </div>
                   )}
                 </div>
-                {msg.ts && <MessageTime ts={msg.ts} />}
               </div>
             </div>
           ))}
 
           {loading && (
-            <div className="flex gap-3 self-start">
-              <div className="w-9 h-9 rounded-xl bg-gradient-primary text-white flex items-center justify-center shrink-0">
-                <Bot size={16} />
+            <div className="flex gap-4 self-start">
+              <div className="w-10 h-10 rounded-xl bg-gradient-primary text-white flex items-center justify-center shrink-0 shadow-glow animate-bounce">
+                <Bot size={18} />
               </div>
-              <div className="px-5 py-4 bg-bgElevated border border-white/5 rounded-tl-sm rounded-tr-2xl rounded-b-2xl">
-                <div className="flex gap-1.5 items-center">
+              <div className="px-6 py-5 bg-bgElevated border border-borderColor/50 dark:border-white/5 rounded-tl-sm rounded-tr-2xl rounded-b-2xl shadow-xl">
+                <div className="flex gap-2 items-center">
                   <div className="w-2 h-2 bg-accentPrimary rounded-full animate-typing [animation-delay:-0.32s]"></div>
                   <div className="w-2 h-2 bg-accentPrimary rounded-full animate-typing [animation-delay:-0.16s]"></div>
                   <div className="w-2 h-2 bg-accentPrimary rounded-full animate-typing"></div>
+                  <span className="text-[10px] text-textMuted uppercase tracking-widest ml-2 font-bold italic">Analyse en cours</span>
                 </div>
               </div>
             </div>
@@ -198,43 +273,43 @@ function Chat({ apiUrl }) {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
-        <div className="px-6 py-4 bg-[#161b22]/80 border-t border-white/5 shrink-0">
-          <form onSubmit={handleSubmit} className="relative flex items-center mb-3">
+        {/* Input area */}
+        <div className="px-6 py-5 bg-bgSecondary/85 backdrop-blur-3xl border-t border-borderColor/50 dark:border-white/5 shrink-0 relative z-10 transition-all duration-300">
+          <form onSubmit={handleSubmit} className="relative flex items-center mb-4 group">
             <input
               type="text"
               value={input}
               onChange={e => setInput(e.target.value)}
               maxLength={MAX_CHARS}
-              placeholder="Ex: Montre-moi les véhicules en maintenance..."
-              className={`w-full py-4 pr-16 pl-5 bg-bgTertiary border rounded-2xl text-sm text-textPrimary font-sans transition-all duration-300 focus:outline-none placeholder:text-textMuted disabled:opacity-60 disabled:cursor-not-allowed ${overLimit ? 'border-[#ff6b9d]/50 focus:border-[#ff6b9d] focus:shadow-[0_0_0_3px_rgba(255,107,157,0.15)]' : 'border-white/5 focus:border-accentPrimary/50 focus:shadow-[0_0_0_3px_rgba(124,91,255,0.15)]'}`}
+              placeholder="Ex: Liste des véhicules actifs à Casablanca..."
+              className={`w-full py-4.5 pr-20 pl-6 bg-bgTertiary border rounded-2xl text-[0.95rem] text-textPrimary font-medium transition-all duration-500 focus:outline-none placeholder:text-textMuted/60 disabled:opacity-60 
+                ${overLimit ? 'border-accentTertiary/50 focus:border-accentTertiary focus:shadow-[0_0_0_4px_rgba(255,107,157,0.1)]' : 'border-borderColor/50 focus:border-accentPrimary/50 focus:shadow-[0_0_0_4px_rgba(124,91,255,0.1)]'}`}
               disabled={loading}
               autoFocus
             />
             <button
               type="submit"
-              className="absolute right-2 w-10 h-10 bg-gradient-primary border-none rounded-xl text-white flex items-center justify-center cursor-pointer transition-all duration-150 shadow-[0_4px_15px_rgba(124,91,255,0.3)] hover:scale-105 disabled:opacity-40 disabled:shadow-none disabled:cursor-not-allowed disabled:transform-none"
+              className="absolute right-2.5 w-12 h-12 bg-gradient-primary border-none rounded-xl text-white flex items-center justify-center cursor-pointer transition-all duration-300 shadow-glow active:scale-95 disabled:opacity-30 disabled:grayscale disabled:scale-95"
               disabled={loading || !input.trim() || overLimit}
             >
-              <Send size={16} />
+              <Send size={20} />
             </button>
           </form>
 
-          {/* Char counter */}
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2 overflow-x-auto scrollbar-none">
-              <span className="text-[10px] text-textMuted whitespace-nowrap">Suggestions :</span>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2 overflow-x-auto scrollbar-none py-1">
+              <span className="text-[9px] text-textMuted font-black uppercase tracking-[0.2em] whitespace-nowrap mr-2">Suggestions :</span>
               {exampleQuestions.map((q, i) => (
                 <button key={i} type="button" onClick={() => setInput(q)}
-                  className="bg-bgTertiary border border-white/5 text-textSecondary py-1.5 px-3 rounded-full text-[11px] cursor-pointer whitespace-nowrap hover:border-accentPrimary hover:text-textPrimary transition-colors disabled:opacity-40"
+                  className="bg-bgTertiary border border-borderColor/50 text-textSecondary py-1.5 px-4 rounded-xl text-[10px] font-bold cursor-pointer whitespace-nowrap hover:border-accentPrimary hover:scale-105 hover:text-textPrimary transition-all duration-300 disabled:opacity-40"
                   disabled={loading}>
                   {q}
                 </button>
               ))}
             </div>
-            <span className={`text-[10px] tabular-nums shrink-0 ml-2 ${charCount > MAX_CHARS * 0.85 ? (overLimit ? 'text-[#ff6b9d] font-bold' : 'text-[#ffb347]') : 'text-textMuted'}`}>
-              {charCount}/{MAX_CHARS}
-            </span>
+            <div className={`text-[10px] font-bold tabular-nums shrink-0 transition-colors px-2 py-1 rounded-md bg-bgTertiary border border-borderColor/20 ${charCount > MAX_CHARS * 0.85 ? (overLimit ? 'text-accentTertiary bg-accentTertiary/10' : 'text-accentWarning') : 'text-textMuted'}`}>
+              {charCount} / {MAX_CHARS}
+            </div>
           </div>
         </div>
       </div>

@@ -50,7 +50,7 @@ function KPICard({ icon, title, value, stat1, stat2, colorClass, iconClass, spar
   const animatedValue = useCountUp(value);
 
   return (
-    <div className={`relative overflow-hidden p-6 rounded-2xl border backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-[0_4px_20px_rgba(0,0,0,0.15)] group cursor-default ${colorClass}`}>
+    <div className={`relative overflow-hidden p-6 rounded-2xl border backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-[0_10px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.25)] group cursor-default ${colorClass}`}>
       <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none"></div>
       <div className="flex justify-between items-center mb-6 relative z-10">
         <h3 className="text-xs font-semibold text-textSecondary uppercase tracking-widest">{title}</h3>
@@ -84,8 +84,8 @@ function KPICard({ icon, title, value, stat1, stat2, colorClass, iconClass, spar
 function StatCard({ icon, title, value, description, accent }) {
   const animatedValue = useCountUp(value);
   return (
-    <div className="flex items-center gap-6 p-6 bg-bgSurface backdrop-blur-xl border border-white/5 rounded-2xl transition-all duration-300 hover:scale-[1.02] hover:border-white/10 group">
-      <div className={`w-14 h-14 border text-textPrimary rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-110 ${accent || 'bg-bgTertiary border-white/5'}`}>
+    <div className="flex items-center gap-6 p-6 bg-bgSurface backdrop-blur-xl border border-borderColor/50 dark:border-white/5 rounded-2xl transition-all duration-300 hover:scale-[1.01] shadow-[0_10px_40px_rgba(0,0,0,0.06)] dark:shadow-none hover:shadow-2xl dark:hover:shadow-none group">
+      <div className={`w-14 h-14 border text-textPrimary rounded-2xl flex items-center justify-center shrink-0 transition-all duration-300 group-hover:scale-105 ${accent || 'bg-bgTertiary border-white/5'}`}>
         {icon}
       </div>
       <div className="flex flex-col">
@@ -101,9 +101,32 @@ function StatCard({ icon, title, value, description, accent }) {
 function LastUpdated({ time }) {
   if (!time) return null;
   return (
-    <span className="text-xs text-textMuted">
-      Actualisé à {time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+    <span className="text-[10px] text-textMuted uppercase tracking-wider">
+      Données de {time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
     </span>
+  );
+}
+
+/* ── Floating Clock Widget ── */
+function ClockWidget() {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const interval = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex flex-col items-end group">
+      <div className="flex items-baseline gap-3">
+        <span className="text-sm font-medium text-textSecondary capitalize">
+          {time.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'short' })}
+        </span>
+        <span className="text-2xl font-bold text-textPrimary tabular-nums tracking-tight">
+          {time.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+        </span>
+      </div>
+    </div>
   );
 }
 
@@ -170,22 +193,30 @@ function Dashboard({ apiUrl }) {
   return (
     <div className="animate-fade-slide-up opacity-0">
       {/* Header */}
-      <div className="mb-8 flex items-start justify-between gap-4">
+      <div className="mb-10 flex flex-col md:flex-row items-start justify-between gap-6">
         <div>
-          <h2 className="text-3xl font-bold text-textPrimary mb-1 tracking-tight">Vue d'ensemble</h2>
-          <p className="text-base text-textSecondary">Métriques en temps réel du réseau de transport urbain</p>
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accentPrimary/10 border border-accentPrimary/20 text-accentPrimary text-[10px] font-bold uppercase tracking-wider mb-4">
+            <Activity size={12} />
+            Tableau de Bord Opérationnel
+          </div>
+          <h2 className="text-4xl font-extrabold text-textPrimary mb-2 tracking-tight">Vue d'ensemble</h2>
+          <p className="text-textSecondary max-w-xl">Supervision en temps réel des flux, de la maintenance et des alertes de sécurité sur l'ensemble du réseau local.</p>
         </div>
-        <div className="flex flex-col items-end gap-2">
-          <button
-            onClick={() => fetchKPI(true)}
-            disabled={refreshing}
-            title="Actualiser les données"
-            className="flex items-center gap-2 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-sm text-textSecondary hover:text-textPrimary transition-all duration-200 disabled:opacity-50"
-          >
-            <RefreshCw size={15} className={refreshing ? 'animate-spin' : ''} />
-            {refreshing ? 'Actualisation...' : 'Actualiser'}
-          </button>
-          <LastUpdated time={lastUpdated} />
+        <div className="flex flex-col items-end gap-4 shrink-0">
+          <ClockWidget />
+          <div className="flex items-center gap-3 mt-2">
+            <LastUpdated time={lastUpdated} />
+            <div className="w-px h-3 bg-white/10"></div>
+            <button
+              onClick={() => fetchKPI(true)}
+              disabled={refreshing}
+              title="Actualiser les données"
+              className="group flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-[11px] font-bold text-textSecondary hover:text-textPrimary transition-all duration-200 disabled:opacity-50"
+            >
+              <RefreshCw size={12} className={refreshing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'} />
+              {refreshing ? 'ACTUALISATION...' : 'ACTUALISER'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -197,7 +228,7 @@ function Dashboard({ apiUrl }) {
           value={kpi.vehicules.total}
           stat1={{ label: 'En service', val: kpi.vehicules.actifs, color: 'text-[#4dabf7]' }}
           stat2={{ label: 'Maintenance', val: kpi.vehicules.maintenance, color: 'text-[#ffb347]' }}
-          colorClass="bg-gradient-card-blue border-[#4dabf7]/20 hover:shadow-[0_10px_30px_rgba(77,171,247,0.15)]"
+          colorClass="bg-gradient-card-blue border-[#4dabf7]/40 dark:border-[#4dabf7]/20 hover:shadow-[0_10px_30px_rgba(77,171,247,0.15)]"
           iconClass="bg-[#4dabf7]/15 text-[#4dabf7]"
           sparkData={mockVehiculeData}
           sparkColor="#4dabf7"
@@ -207,7 +238,7 @@ function Dashboard({ apiUrl }) {
           title="Personnel"
           value={kpi.chauffeurs.total}
           stat1={{ label: 'En poste', val: kpi.chauffeurs.actifs, color: 'text-[#00d4aa]' }}
-          colorClass="bg-gradient-card-green border-[#00d4aa]/20 hover:shadow-[0_10px_30px_rgba(0,212,170,0.15)]"
+          colorClass="bg-gradient-card-green border-[#00d4aa]/40 dark:border-[#00d4aa]/20 hover:shadow-[0_10px_30px_rgba(0,212,170,0.15)]"
           iconClass="bg-[#00d4aa]/15 text-[#00d4aa]"
           sparkData={mockChaufData}
           sparkColor="#00d4aa"
@@ -218,7 +249,7 @@ function Dashboard({ apiUrl }) {
           value={kpi.trajets.total}
           stat1={{ label: 'Terminés', val: kpi.trajets.termines, color: 'text-[#7c5bff]' }}
           stat2={{ label: 'En cours', val: kpi.trajets.en_cours, color: 'text-[#00d4aa]' }}
-          colorClass="bg-gradient-card-purple border-[#7c5bff]/20 hover:shadow-[0_10px_30px_rgba(124,91,255,0.15)]"
+          colorClass="bg-gradient-card-purple border-[#7c5bff]/40 dark:border-[#7c5bff]/20 hover:shadow-[0_10px_30px_rgba(124,91,255,0.15)]"
           iconClass="bg-[#7c5bff]/15 text-[#7c5bff]"
           sparkData={mockTrajetData}
           sparkColor="#7c5bff"
@@ -229,7 +260,7 @@ function Dashboard({ apiUrl }) {
           value={kpi.incidents.total}
           stat1={{ label: 'Non résolus', val: kpi.incidents.non_resolus, color: 'text-[#ff6b9d]' }}
           stat2={{ label: 'Ce mois', val: kpi.incidents.ce_mois, color: 'text-[#ffb347]' }}
-          colorClass="bg-gradient-card-red border-[#ff6b9d]/20 hover:shadow-[0_10px_30px_rgba(255,107,157,0.15)]"
+          colorClass="bg-gradient-card-red border-[#ff6b9d]/40 dark:border-[#ff6b9d]/20 hover:shadow-[0_10px_30px_rgba(255,107,157,0.15)]"
           iconClass="bg-[#ff6b9d]/15 text-[#ff6b9d]"
           sparkData={mockIncidentData}
           sparkColor="#ff6b9d"
@@ -259,7 +290,7 @@ function Dashboard({ apiUrl }) {
         <h3 className="text-lg font-bold text-textPrimary mb-6">Détail par catégorie</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Véhicules breakdown */}
-          <div className="bg-bgTertiary/50 rounded-xl p-4 border border-white/5">
+          <div className="bg-bgTertiary/50 rounded-xl p-4 border border-borderColor/50 dark:border-white/5 shadow-md dark:shadow-none">
             <h4 className="text-sm font-semibold text-textSecondary mb-3 flex items-center gap-2">
               <Activity size={16} className="text-[#4dabf7]" />
               Véhicules
@@ -285,7 +316,7 @@ function Dashboard({ apiUrl }) {
           </div>
 
           {/* Chauffeurs breakdown */}
-          <div className="bg-bgTertiary/50 rounded-xl p-4 border border-white/5">
+          <div className="bg-bgTertiary/50 rounded-xl p-4 border border-borderColor/50 dark:border-white/5 shadow-md dark:shadow-none">
             <h4 className="text-sm font-semibold text-textSecondary mb-3 flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#00d4aa]"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
               Chauffeurs
@@ -307,7 +338,7 @@ function Dashboard({ apiUrl }) {
           </div>
 
           {/* Trajets breakdown */}
-          <div className="bg-bgTertiary/50 rounded-xl p-4 border border-white/5">
+          <div className="bg-bgTertiary/50 rounded-xl p-4 border border-borderColor/50 dark:border-white/5 shadow-md dark:shadow-none">
             <h4 className="text-sm font-semibold text-textSecondary mb-3 flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#7c5bff]"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
               Trajets
@@ -333,7 +364,7 @@ function Dashboard({ apiUrl }) {
           </div>
 
           {/* Incidents breakdown */}
-          <div className="bg-bgTertiary/50 rounded-xl p-4 border border-white/5">
+          <div className="bg-bgTertiary/50 rounded-xl p-4 border border-borderColor/50 dark:border-white/5 shadow-md dark:shadow-none">
             <h4 className="text-sm font-semibold text-textSecondary mb-3 flex items-center gap-2">
               <ShieldAlert size={16} className="text-[#ff6b9d]" />
               Incidents

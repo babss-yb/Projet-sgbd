@@ -26,10 +26,10 @@ module.exports = {
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(135deg, #7c5bff 0%, #00d4aa 100%)',
-        'gradient-card-blue': 'linear-gradient(135deg, rgba(77, 171, 247, 0.12) 0%, rgba(124, 91, 255, 0.06) 100%)',
-        'gradient-card-green': 'linear-gradient(135deg, rgba(0, 212, 170, 0.12) 0%, rgba(0, 212, 170, 0.03) 100%)',
-        'gradient-card-purple': 'linear-gradient(135deg, rgba(124, 91, 255, 0.12) 0%, rgba(255, 107, 157, 0.06) 100%)',
-        'gradient-card-red': 'linear-gradient(135deg, rgba(255, 107, 157, 0.12) 0%, rgba(255, 179, 71, 0.06) 100%)',
+        'gradient-card-blue': 'linear-gradient(135deg, rgba(77, 171, 247, 0.18) 0%, rgba(124, 91, 255, 0.08) 100%)',
+        'gradient-card-green': 'linear-gradient(135deg, rgba(0, 212, 170, 0.18) 0%, rgba(0, 212, 170, 0.05) 100%)',
+        'gradient-card-purple': 'linear-gradient(135deg, rgba(124, 91, 255, 0.18) 0%, rgba(255, 107, 157, 0.08) 100%)',
+        'gradient-card-red': 'linear-gradient(135deg, rgba(255, 107, 157, 0.18) 0%, rgba(255, 179, 71, 0.08) 100%)',
       },
       boxShadow: {
         'glow': '0 0 40px rgba(124, 91, 255, 0.15)',

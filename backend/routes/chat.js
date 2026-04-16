@@ -141,9 +141,23 @@ Ne génère que du JSON valide, pas de texte avant ou après.`;
         const [rows] = await db.query(aiResponse.sql);
         queryResult = rows;
         
-        // Générer une réponse naturelle basée sur les résultats
+        // Générer une réponse naturelle basée sur les résultats avec l'IA
         if (rows.length > 0) {
-          aiResponse.natural_answer = generateNaturalAnswer(rows, message);
+          try {
+            const natPrompt = `Question de l'utilisateur : "${message}"\nRésultat SQL : ${JSON.stringify(rows.slice(0, 5))}\n\nFormule uniquement la réponse finale en langage naturel avec précision. Ne donne aucune explication.
+Exemples de style attendu :
+- "12 trajets terminés cette semaine."
+- "Ibrahima FALL avec 2 incidents ce mois."
+- "Voici les véhicules en maintenance : DK-9012-EF (78 000 km)."`;
+            const natCompletion = await openai.chat.completions.create({
+              model: process.env.LLM_MODEL || process.env.OPENAI_MODEL || defaultModel,
+              messages: [{ role: 'system', content: 'Tu es un assistant de transport très direct. Réponds brièvement avec les données fournies.' }, { role: 'user', content: natPrompt }],
+              temperature: 0.3
+            });
+            aiResponse.natural_answer = natCompletion.choices[0].message.content.trim();
+          } catch (e) {
+            aiResponse.natural_answer = generateNaturalAnswer(rows, message);
+          }
         } else {
           aiResponse.natural_answer = "Aucun résultat trouvé pour cette requête.";
         }

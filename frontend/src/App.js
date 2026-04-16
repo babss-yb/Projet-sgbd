@@ -81,8 +81,8 @@ function App() {
       </div>
 
       {/* Sidebar Navigation */}
-      <aside className="w-full md:w-[280px] bg-bgSecondary/90 backdrop-blur-[20px] border-b md:border-b-0 md:border-r border-borderColor flex flex-col z-10 relative shadow-lg">
-        <div className="p-6 flex items-center gap-4 border-b border-borderColor">
+      <aside className="w-full md:w-[280px] bg-bgSecondary/95 backdrop-blur-[20px] border-b md:border-b-0 md:border-r border-borderColor flex flex-col z-10 relative shadow-xl dark:shadow-none transition-all duration-300">
+        <div className="p-6 flex items-center gap-4 border-b border-borderColor/50 dark:border-borderColor">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white bg-gradient-primary shadow-glow shrink-0">
             <Bus size={22} strokeWidth={2.5} />
           </div>
@@ -113,18 +113,18 @@ function App() {
         </nav>
 
         <div className="p-4 md:p-6 border-t border-borderColor flex flex-col gap-4">
-          <div className="flex justify-between items-center bg-bgTertiary p-2 rounded-xl border border-borderColor">
+          <div className="flex justify-between items-center bg-bgTertiary p-1.5 rounded-xl border border-borderColor/50 transition-all duration-300">
             <button
               onClick={() => {
                 setIsDarkMode(false);
                 document.documentElement.classList.remove('dark');
                 localStorage.setItem('theme', 'light');
               }}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
-                !isDarkMode ? 'bg-white shadow text-textPrimary' : 'text-textMuted hover:text-textPrimary'
+              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all duration-300 ${
+                !isDarkMode ? 'bg-white shadow-sm text-accentPrimary ring-1 ring-black/5' : 'text-textMuted hover:text-textPrimary'
               }`}
             >
-              <Sun size={14} /> Clair
+              <Sun size={13} /> Clair
             </button>
             <button
               onClick={() => {
@@ -132,15 +132,15 @@ function App() {
                 document.documentElement.classList.add('dark');
                 localStorage.setItem('theme', 'dark');
               }}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-semibold cursor-pointer transition-all ${
-                isDarkMode ? 'bg-bgElevated border border-white/10 shadow text-textPrimary' : 'text-textMuted hover:text-textPrimary'
+              className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider cursor-pointer transition-all duration-300 ${
+                isDarkMode ? 'bg-bgElevated border border-white/10 shadow-sm text-accentPrimary' : 'text-textMuted hover:text-textPrimary'
               }`}
             >
-              <Moon size={14} /> Sombre
+              <Moon size={13} /> Sombre
             </button>
           </div>
 
-          <LiveClock />
+          {/* LiveClock removed as requested - moved to Dashboard header */}
         </div>
       </aside>
 

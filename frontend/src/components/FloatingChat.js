@@ -6,9 +6,14 @@ const MAX_CHARS = 500;
 
 /* ── Helpers ── */
 function MessageTime({ ts }) {
+  if (!ts) return null;
+  const isToday = new Date().toDateString() === ts.toDateString();
+  const dateStr = ts.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+  const timeStr = ts.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  
   return (
-    <span className="text-[10px] text-textMuted mt-1 block">
-      {ts.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
+    <span className="text-[9px] text-textMuted font-medium opacity-50 whitespace-nowrap">
+      {isToday ? timeStr : `${dateStr}. ${timeStr}`}
     </span>
   );
 }
@@ -45,7 +50,7 @@ function PulseRing() {
 export default function FloatingChat({ apiUrl }) {
   const WELCOME = {
     role: 'assistant',
-    content: 'Bonjour ! Posez-moi des questions sur les véhicules, chauffeurs ou trajets, je génère le SQL automatiquement.',
+    content: 'Bonjour, je suis TranspoBot à votre service !',
     ts: new Date(),
   };
 
@@ -113,7 +118,7 @@ export default function FloatingChat({ apiUrl }) {
     <>
       {/* ── Chat Panel ── */}
       <div
-        className={`fixed bottom-24 right-6 z-[9999] w-[380px] max-w-[calc(100vw-3rem)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
+        className={`fixed bottom-20 right-6 z-[9999] w-[320px] max-w-[calc(100vw-3rem)] transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)]
           ${open ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-8 pointer-events-none'}`}
       >
         <div className="flex flex-col bg-bgSecondary/95 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-[0_32px_80px_rgba(0,0,0,0.6),0_0_0_1px_rgba(124,91,255,0.1)] overflow-hidden"
@@ -160,43 +165,42 @@ export default function FloatingChat({ apiUrl }) {
             <>
               <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-4">
                 {messages.map((msg, i) => (
-                  <div key={i} className={`flex gap-2.5 max-w-[92%] ${msg.role === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}>
-                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-sm ${msg.role === 'user' ? 'bg-bgElevated border border-white/5 text-textSecondary' : 'bg-gradient-primary text-white shadow-[0_0_10px_rgba(124,91,255,0.3)]'}`}>
-                      {msg.role === 'user' ? <User size={14} /> : <Bot size={14} />}
+                  <div key={i} className={`flex gap-2 max-w-[95%] ${msg.role === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}>
+                    <div className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 text-sm ${msg.role === 'user' ? 'bg-bgElevated border border-white/5 text-textSecondary' : 'bg-gradient-primary text-white shadow-[0_0_10px_rgba(124,91,255,0.3)]'}`}>
+                      {msg.role === 'user' ? <User size={12} /> : <Bot size={12} />}
                     </div>
-                    <div className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                      <div className={`px-4 py-3 text-[0.82rem] leading-relaxed text-textPrimary break-words
+                    <div className={`flex flex-col flex-1 min-w-0 ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
+                      <div className={`px-3 py-2.5 text-[0.8rem] leading-relaxed text-textPrimary break-words overflow-hidden max-w-full
                         ${msg.role === 'user'
                           ? 'bg-[#7c5bff]/15 border border-[#7c5bff]/25 rounded-tl-2xl rounded-tr-sm rounded-b-2xl'
                           : 'bg-bgElevated border border-white/5 rounded-tl-sm rounded-tr-2xl rounded-b-2xl'}`}
                       >
-                        {msg.content}
+                        <div className="flex justify-between items-start gap-4 mb-1">
+                          <div className="flex-1">{msg.content}</div>
+                          <div className="shrink-0"><MessageTime ts={msg.ts} /></div>
+                        </div>
 
                         {msg.sql && (
-                          <div className="mt-3 pt-3 border-t border-white/5">
+                          <div className="mt-2.5 pt-2.5 border-t border-white/5 max-w-full">
                             <div className="flex items-center justify-between mb-1.5">
                               <span className="text-[9px] uppercase tracking-widest text-accentPrimary font-semibold">SQL Exécuté</span>
                               <CopyButton text={msg.sql} />
                             </div>
-                            <pre className="bg-[#0d1117] text-[#c9d1d9] px-3 py-2.5 rounded-lg border border-[#30363d] text-[10px] font-mono overflow-x-auto m-0 leading-relaxed">
+                            <pre className="bg-[#0d1117] text-[#c9d1d9] px-2.5 py-2 rounded-lg border border-[#30363d] text-[9.5px] font-mono overflow-x-auto m-0 leading-relaxed whitespace-pre-wrap break-all">
                               {msg.sql}
                             </pre>
                           </div>
                         )}
 
-                        {msg.explanation && (
-                          <div className="mt-2 px-3 py-2 bg-[#00d4aa]/5 border-l-[3px] border-accentSecondary rounded-r-lg text-[10px] text-textSecondary">
-                            <strong className="text-accentSecondary">Analyse : </strong>{msg.explanation}
-                          </div>
-                        )}
+
 
                         {msg.results && msg.results.length > 0 && (
-                          <div className="mt-2 bg-[#0d1117] border border-white/5 rounded-xl overflow-hidden">
+                          <div className="mt-2 bg-[#0d1117] border border-white/5 rounded-xl overflow-hidden max-w-full">
                             <div className="px-3 py-2 bg-white/[0.03] border-b border-white/5 text-[9px] text-textSecondary uppercase tracking-wider font-semibold">
                               {msg.results.length} résultat{msg.results.length > 1 ? 's' : ''}
                             </div>
-                            <div className="overflow-x-auto">
-                              <table className="w-full border-collapse text-[10px]">
+                            <div className="overflow-x-auto w-full max-w-full block">
+                              <table className="w-full border-collapse text-[10px] min-w-max">
                                 <thead>
                                   <tr>{Object.keys(msg.results[0]).map(k => <th key={k} className="px-3 py-2 text-left border-b border-white/5 text-textSecondary font-semibold whitespace-nowrap">{k}</th>)}</tr>
                                 </thead>
@@ -219,7 +223,6 @@ export default function FloatingChat({ apiUrl }) {
                           </div>
                         )}
                       </div>
-                      {msg.ts && <MessageTime ts={msg.ts} />}
                     </div>
                   </div>
                 ))}
@@ -261,13 +264,13 @@ export default function FloatingChat({ apiUrl }) {
                     maxLength={MAX_CHARS}
                     placeholder="Posez votre question..."
                     disabled={loading}
-                    className={`flex-1 bg-bgTertiary border rounded-2xl py-3 px-4 pr-12 text-xs text-textPrimary placeholder:text-textMuted focus:outline-none transition-all disabled:opacity-50
+                    className={`flex-1 bg-bgTertiary border rounded-2xl py-2.5 px-3 pr-10 text-[0.8rem] text-textPrimary placeholder:text-textMuted focus:outline-none transition-all disabled:opacity-50
                       ${overLimit ? 'border-[#ff6b9d]/40 focus:shadow-[0_0_0_2px_rgba(255,107,157,0.2)]' : 'border-white/5 focus:border-accentPrimary/40 focus:shadow-[0_0_0_2px_rgba(124,91,255,0.15)]'}`}
                   />
                   <button type="submit" disabled={loading || !input.trim() || overLimit}
-                    className="absolute right-2 w-8 h-8 bg-gradient-primary rounded-xl flex items-center justify-center text-white transition-all hover:scale-105 disabled:opacity-40 disabled:transform-none shadow-[0_4px_12px_rgba(124,91,255,0.3)]"
+                    className="absolute right-1.5 w-7 h-7 bg-gradient-primary rounded-xl flex items-center justify-center text-white transition-all hover:scale-105 disabled:opacity-40 disabled:transform-none shadow-[0_4px_12px_rgba(124,91,255,0.3)]"
                   >
-                    <Send size={13} />
+                    <Send size={12} />
                   </button>
                 </form>
 
@@ -287,7 +290,7 @@ export default function FloatingChat({ apiUrl }) {
       <button
         onClick={open ? handleClose : handleOpen}
         aria-label="Ouvrir le chat IA"
-        className={`fixed bottom-6 right-6 z-[9999] w-16 h-16 rounded-2xl flex items-center justify-center
+        className={`fixed bottom-6 right-6 z-[9999] w-12 h-12 rounded-full flex items-center justify-center
           shadow-[0_8px_32px_rgba(124,91,255,0.5)] transition-all duration-300 ease-out
           ${open
             ? 'bg-bgElevated border border-white/10 text-textSecondary hover:text-textPrimary hover:bg-bgTertiary rotate-0'
@@ -298,7 +301,7 @@ export default function FloatingChat({ apiUrl }) {
 
         {/* Icon with smooth swap */}
         <div className={`relative transition-all duration-300 ${open ? 'rotate-90 scale-90' : 'rotate-0 scale-100'}`}>
-          {open ? <X size={24} /> : <Sparkles size={24} />}
+          {open ? <X size={20} /> : <Sparkles size={20} />}
         </div>
 
         {/* Unread badge */}
