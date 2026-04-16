@@ -34,7 +34,7 @@ function LiveClock() {
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
-  const apiUrl = '/api';
+  const apiUrl = process.env.REACT_APP_API_URL || '/api';
 
   // Theme State
   const [isDarkMode, setIsDarkMode] = useState(true);
