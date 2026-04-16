@@ -33,7 +33,23 @@ function LiveClock() {
 }
 
 function App() {
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(() => {
+    const path = window.location.pathname.toLowerCase();
+    const hash = window.location.hash.toLowerCase();
+    if (path.includes('/assistant-ia') || hash.includes('assistant-ia')) return 'chat';
+    if (path.includes('/donnees') || hash.includes('donnees')) return 'data';
+    return 'dashboard';
+  });
+  
+  const handleTabChange = (tabId) => {
+    setActiveTab(tabId);
+    let newPath = '/';
+    if (tabId === 'chat') newPath = '/assistant-ia';
+    else if (tabId === 'data') newPath = '/donnees';
+    
+    window.history.pushState(null, '', newPath);
+  };
+
   const apiUrl = process.env.REACT_APP_API_URL || '/api';
 
   // Theme State
@@ -101,7 +117,7 @@ function App() {
                 key={tab.id}
                 className={`relative flex items-center gap-4 px-5 py-4 rounded-xl cursor-pointer font-medium text-sm transition-all duration-300 overflow-hidden whitespace-nowrap
                   ${isActive ? 'bg-gradient-primary text-white shadow-md' : 'text-textSecondary border border-transparent hover:bg-borderColor hover:text-textPrimary'}`}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)}
               >
                 <div className={`flex items-center justify-center transition-colors duration-300 ${isActive ? 'text-white' : 'text-inherit'}`}>
                   <Icon size={18} />
