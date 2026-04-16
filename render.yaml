@@ -1,5 +1,5 @@
 services:
-  # Le Backend
+  # Backend API
   - type: web
     name: transpobot-backend
     runtime: node
@@ -9,15 +9,42 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: PORT
+        value: 3000
+      - key: DB_HOST
+        fromDatabase:
+          name: transpobot-db
+          property: host
+      - key: DB_USER
+        fromDatabase:
+          name: transpobot-db
+          property: username
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: transpobot-db
+          property: password
+      - key: DB_NAME
+        fromDatabase:
+          name: transpobot-db
+          property: database
+      - key: DB_PORT
+        fromDatabase:
+          name: transpobot-db
+          property: port
+      - key: OPENAI_API_KEY
+        sync: false
 
-  # Le Frontend
-  - type: static
+  # Frontend static
+  - type: web
     name: transpobot-frontend
+    runtime: static # C'est ici qu'on définit que c'est un site statique
     rootDir: frontend
     buildCommand: npm install && npm run build
     publishDir: build
+    envVars:
+      - key: REACT_APP_API_URL
+        value: https://transpobot-backend.onrender.com
 
-# La Base de données
 databases:
   - name: transpobot-db
     databaseName: transpobot
